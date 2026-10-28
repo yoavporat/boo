@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0d0716">
+  <title>BOO!</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>👻</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Nunito:wght@600;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --night: #0d0716;
+      --dusk: #2a1340;
+      --pumpkin: #ff7a18;
+      --ember: #ffb347;
+      --slime: #9bff5c;
+      --bone: #f4ead5;
+    }
+
+    * { box-sizing: border-box; margin: 0; }
+
+    html, body { height: 100%; }
+
+    body {
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1.25rem;
+      padding: max(1.25rem, env(safe-area-inset-top)) 1rem max(1.25rem, env(safe-area-inset-bottom));
+      background:
+        radial-gradient(circle at 80% 8%, #fff7d6 0 2.2rem, rgba(255, 247, 214, .25) 2.4rem, transparent 6rem),
+        radial-gradient(ellipse at 50% 120%, rgba(255, 122, 24, .35), transparent 60%),
+        linear-gradient(180deg, var(--night) 0%, var(--dusk) 100%);
+      background-attachment: fixed;
+      color: var(--bone);
+      font-family: "Nunito", system-ui, sans-serif;
+      text-align: center;
+      overflow-x: hidden;
+    }
+
+    h1 {
+      font-family: "Creepster", "Chiller", fantasy;
+      font-weight: 400;
+      font-size: clamp(5rem, 32vw, 11rem);
+      line-height: .9;
+      letter-spacing: .06em;
+      color: var(--pumpkin);
+      text-shadow:
+        0 0 .15em rgba(255, 122, 24, .8),
+        0 0 .5em rgba(255, 122, 24, .45),
+        .04em .06em 0 #5a1d00;
+      animation: flicker 4s infinite, wobble 3s ease-in-out infinite;
+    }
+
+    .frame {
+      position: relative;
+      width: min(100%, 28rem);
+      aspect-ratio: 1;
+      border-radius: 1.5rem;
+      overflow: hidden;
+      background: rgba(0, 0, 0, .45);
+      border: 3px solid var(--pumpkin);
+      box-shadow: 0 0 1.5rem rgba(255, 122, 24, .35), inset 0 0 2rem rgba(0, 0, 0, .6);
+    }
+
+    .frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      opacity: 0;
+      transition: opacity .4s ease;
+    }
+
+    .frame img.loaded { opacity: 1; }
+
+    .ghost-loader {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      font-size: 4rem;
+      animation: float 1.6s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    .frame.ready .ghost-loader { display: none; }
+
+    .bats {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .bats span {
+      position: absolute;
+      font-size: 1.5rem;
+      opacity: .7;
+      animation: fly linear infinite;
+    }
+
+    .bats span:nth-child(1) { top: 12%; animation-duration: 14s; }
+    .bats span:nth-child(2) { top: 30%; animation-duration: 19s; animation-delay: -6s; font-size: 1.1rem; }
+    .bats span:nth-child(3) { top: 55%; animation-duration: 23s; animation-delay: -12s; font-size: 1.3rem; }
+
+    footer {
+      font-size: .75rem;
+      opacity: .55;
+    }
+
+    footer a { color: inherit; }
+
+    @keyframes flicker {
+      0%, 92%, 100% { opacity: 1; }
+      93% { opacity: .4; }
+      94% { opacity: 1; }
+      96% { opacity: .6; }
+    }
+
+    @keyframes wobble {
+      0%, 100% { transform: rotate(-2deg); }
+      50% { transform: rotate(2deg) translateY(-.05em); }
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-.75rem); }
+    }
+
+    @keyframes fly {
+      from { transform: translateX(-10vw) translateY(0); }
+      25% { transform: translateX(25vw) translateY(-1.5rem); }
+      50% { transform: translateX(55vw) translateY(.5rem); }
+      75% { transform: translateX(85vw) translateY(-1rem); }
+      to { transform: translateX(110vw) translateY(0); }
+    }
+
+    @media (min-width: 48rem) {
+      body { gap: 1.75rem; }
+      .bats span { font-size: 2rem; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      h1, .ghost-loader, .bats span { animation: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="bats" aria-hidden="true"><span>🦇</span><span>🦇</span><span>🦇</span></div>
+
+  <h1>BOO</h1>
+
+  <div class="frame" id="frame">
+    <div class="ghost-loader" aria-hidden="true">👻</div>
+    <img id="gif" alt="A random spooky boo GIF">
+  </div>
+
+  <footer>GIFs via <a href="https://giphy.com" target="_blank" rel="noopener">GIPHY</a></footer>
+
+  <script>
+    const GIFS = [
+      "NzQ4PvgH8RlGWPQJAQ",
+      "ePkrwVdylAzdRRXTX2",
+      "sL0dhyzmw6mMrwIaO3",
+      "DVmnrRm3dj9gA",
+      "pmGFexW39VZRCHbSS8",
+      "vO81dRBjlxf47f5QEW",
+      "xTiTnwi8Azjnva46Fq",
+      "rEGvS9s63vEH1J5kJK",
+      "AjcGO02EP3AbJntWsj",
+      "wRHZ551uN0WVf4QEj1",
+      "w4YXvqqmxK6ti99I8N",
+      "e2cVxX6XuTaRW",
+      "0unKypaVUTZe4yOcco",
+      "mDLkpVWddyqqI"
+    ];
+
+    const img = document.getElementById("gif");
+    const frame = document.getElementById("frame");
+    let current = -1;
+    let failures = 0;
+
+    // Pick a random GIF, avoiding the one that just failed.
+    function show() {
+      let i;
+      do { i = Math.floor(Math.random() * GIFS.length); } while (i === current && GIFS.length > 1);
+      current = i;
+      img.src = `https://i.giphy.com/${GIFS[current]}.webp`;
+    }
+
+    img.addEventListener("load", () => {
+      img.classList.add("loaded");
+      frame.classList.add("ready");
+    });
+
+    // If a GIF is gone, quietly try another one (the 👻 stays as a fallback).
+    img.addEventListener("error", () => {
+      if (++failures < 5) show();
+    });
+
+    show();
+  </script>
+</body>
+</html>
